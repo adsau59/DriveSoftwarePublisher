@@ -1,0 +1,14 @@
+*.ilk
+*.pdb
+*.obj
+*.log
+*.idb
+*.tlog
+*.tlog/
+*.lastbuildstate
+*.sdf
+*.user
+.vs/
+*/obj/
+packages/
+*/bin/
