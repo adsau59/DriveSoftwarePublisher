@@ -10,8 +10,14 @@ using Newtonsoft.Json.Serialization;
 
 namespace ClassLibrary1
 {
+    /// <summary>
+    /// Json Helper class
+    /// </summary>
     public class IJsonWrapper
     {
+        /// <summary>
+        /// Interface for json files
+        /// </summary>
         public interface IBaseJsonWrapper
         {
             string GetPath();
@@ -20,7 +26,11 @@ namespace ClassLibrary1
 
         }
 
-
+        /// <summary>
+        /// Loads json file
+        /// </summary>
+        /// <param name="path">Path of the json file</param>
+        /// <returns>JObject Object</returns>
         public static JObject LoadJObject(string path)
         {
             string jsonString = File.ReadAllText(path);
@@ -29,6 +39,11 @@ namespace ClassLibrary1
             return rss;
         }
 
+        /// <summary>
+        /// Save the json file.
+        /// </summary>
+        /// <param name="path">Path of the json file to be saved</param>
+        /// <param name="rss">JObject object</param>
         public static void SaveJObject(string path, JObject rss)
         {
             File.WriteAllText(path, rss.ToString());

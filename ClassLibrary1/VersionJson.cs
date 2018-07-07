@@ -7,6 +7,9 @@ using Newtonsoft.Json.Linq;
 
 namespace ClassLibrary1
 {
+    /// <summary>
+    /// VersionJson abstract class used in Publisher and Updater
+    /// </summary>
     public abstract class VersionJson : IJsonWrapper.IBaseJsonWrapper
     {
         private string folderId;
@@ -26,12 +29,12 @@ namespace ClassLibrary1
             this.softwareName = softwareName;
         }
 
-        public VersionJson(VersionStruct version)
+        public VersionJson(VersionDetailStruct versionDetail)
         {
-            this.folderId = version.folderId;
-            this.versionCode = version.versionCode;
-            this.versionName = version.versionName;
-            this.softwareName = version.softwareName;
+            this.folderId = versionDetail.folderId;
+            this.versionCode = versionDetail.versionCode;
+            this.versionName = versionDetail.versionName;
+            this.softwareName = versionDetail.softwareName;
         }
 
         public string FolderId
@@ -84,7 +87,10 @@ namespace ClassLibrary1
 
     }
 
-    public struct VersionStruct
+    /// <summary>
+    /// VersionDetail Struct can be used to create VersionJson
+    /// </summary>
+    public struct VersionDetailStruct
     {
         public string folderId;
         public int versionCode;
@@ -92,7 +98,7 @@ namespace ClassLibrary1
         public string softwareName;
 
 
-        public VersionStruct(string folderId, int versionCode, string versionName, string softwareName)
+        public VersionDetailStruct(string folderId, int versionCode, string versionName, string softwareName)
         {
             this.folderId = folderId;
             this.versionCode = versionCode;

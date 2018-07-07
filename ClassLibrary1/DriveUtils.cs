@@ -1,23 +1,31 @@
-﻿using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Google.Apis.Download;
-using File = System.IO.File;
+using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3.Data;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace ClassLibrary1
 {
+    /// <summary>
+    /// Contains utils functions that communicate with Drive api
+    /// </summary>
     public class DriveUtils
     {
-
-        public static string GetFileIdWithVersionCode(Service service, string folderId, int versionCode, out VersionStruct version)
+        /// <summary>
+        /// use version code to get drive file id
+        /// </summary>
+        /// <param name="service">Service object</param>
+        /// <param name="folderId">Parent folder id</param>
+        /// <param name="versionCode">Version code to find</param>
+        /// <param name="versionDetail">gets version details that can be used to create json</param>
+        /// <returns>drive file id of the update zip</returns>
+        public static string GetFileIdWithVersionCode(Service service, string folderId, int versionCode,
+            out VersionDetailStruct versionDetail)
         {
-            List<int> versionList = new List<int>();
+            var versionList = new List<int>();
             string pageToken = null;
             FileList result;
             do
@@ -31,26 +39,29 @@ namespace ClassLibrary1
 
                 if (result.Files.Count > 0)
                 {
-                    string[] nameParts = result.Files[0].Name.Split(new[] { ".zip" }, StringSplitOptions.None)[0].Split(new[] { "--" }, StringSplitOptions.None);
-                    version = new VersionStruct(folderId, Int32.Parse(nameParts[0]), nameParts[2], nameParts[1]);
+                    var nameParts = Utils.GetVersionDetailFromName(result.Files[0].Name);
+                    versionDetail = new VersionDetailStruct(folderId, int.Parse(nameParts[0]), nameParts[2], nameParts[1]);
                     return result.Files[0].Id;
                 }
+
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
-            version = new VersionStruct();
+            versionDetail = new VersionDetailStruct();
             return null;
         }
 
-        /*
-         * Get VersionJson object of the latest version
-         */
-        public static VersionStruct GetLatestVersion(Service service, string folderId)
+        /// <summary>
+        /// Get VersionJson object of the latest version
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="folderId">folderid to search in</param>
+        /// <returns>VersionDeatilStruct of the latest zip</returns>
+        public static VersionDetailStruct GetLatestVersion(Service service, string folderId)
         {
-
-            List<int> versionList = new List<int>();
+            var versionList = new List<int>();
             string pageToken = null;
-            Google.Apis.Drive.v3.Data.File latestFile = null;
+            File latestFile = null;
             FileList result;
             do
             {
@@ -61,18 +72,16 @@ namespace ClassLibrary1
                 request.PageToken = pageToken;
                 result = request.Execute();
 
-                
-                int largestVersion = -1;
+
+                var largestVersion = -1;
                 foreach (var file in result.Files)
                 {
-
-                    int version = Int32.Parse(file.Name.Split(new[] { "--" }, StringSplitOptions.None)[0]);
+                    var version = Utils.GetVersionCodeFromName(file.Name);
                     if (largestVersion < version)
                     {
                         largestVersion = version;
                         latestFile = file;
                     }
-
                 }
 
 
@@ -80,22 +89,36 @@ namespace ClassLibrary1
             } while (pageToken != null);
 
             if (latestFile == null)
-                return new VersionStruct();
+                return new VersionDetailStruct();
 
 
             //versioncode--softwarename--versionname.zip
-            string[] nameParts = latestFile.Name.Split(new[] { ".zip" }, StringSplitOptions.None)[0].Split(new[] { "--" }, StringSplitOptions.None);
-            return new VersionStruct(folderId, Int32.Parse(nameParts[0]), nameParts[2], nameParts[1]);
+            var nameParts = Utils.GetVersionDetailFromName(latestFile.Name);
+            return new VersionDetailStruct(folderId, int.Parse(nameParts[0]), nameParts[2], nameParts[1]);
         }
 
-        public static string IdToDirectDownloadLink(String fileId)
+        /// <summary>
+        /// Returns the url to download the zip with fileid
+        /// </summary>
+        /// <param name="fileId">drive file id</param>
+        /// <returns>direct download url</returns>
+        public static string IdToDirectDownloadLink(string fileId)
         {
             return "https://drive.google.com/uc?export=download&id=" + fileId;
         }
 
-        public static string UploadFileToCloud(Service service, string fileName, string parentFolderId, string localFilePath)
+        /// <summary>
+        /// Uploads the file to the cloud
+        /// </summary>
+        /// <param name="service">driver service.</param>
+        /// <param name="fileName">Name for the file to be saved as</param>
+        /// <param name="parentFolderId">Drive folder id of the parent of the file to be saved</param>
+        /// <param name="localFilePath">File path in the local drive to be saved</param>
+        /// <returns>id of the file that is saved</returns>
+        public static string UploadFileToCloud(Service service, string fileName, string parentFolderId,
+            string localFilePath)
         {
-            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            var fileMetadata = new File
             {
                 Name = fileName,
                 Parents = new List<string>
@@ -104,21 +127,29 @@ namespace ClassLibrary1
                 }
             };
             FilesResource.CreateMediaUpload request;
-            using (var stream = new System.IO.FileStream(localFilePath,
-                System.IO.FileMode.Open))
+            using (var stream = new FileStream(localFilePath,
+                FileMode.Open))
             {
                 request = service.DriveService.Files.Create(
                     fileMetadata, stream, "application/zip");
                 request.Fields = "id";
                 request.Upload();
             }
+
             var file = request.ResponseBody;
             return file.Id;
         }
 
+        /// <summary>
+        /// Create a folder in a drive
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="name">name of the folder to be created</param>
+        /// <param name="folderId">drive folder id of the parent</param>
+        /// <returns>drive folder id of the folder created</returns>
         public static string CreateFolder(Service service, string name, string folderId)
         {
-            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            var fileMetadata = new File
             {
                 Name = name,
                 MimeType = "application/vnd.google-apps.folder",
@@ -133,13 +164,20 @@ namespace ClassLibrary1
             return file.Id;
         }
 
+        /// <summary>
+        /// Searches for updater.zip file in a folder
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="folderId">Drive Folder id of the parent</param>
+        /// <param name="driveLink">drive file id of the updater.zip file</param>
+        /// <returns>true if updater.zip is found</returns>
         public static bool GetUpdaterLink(Service service, string folderId, out string driveLink)
         {
             string pageToken = null;
             do
             {
                 var request = service.DriveService.Files.List();
-                request.Q = "'" + folderId + "' in parents and trashed=false and name='updater.zip'";
+                request.Q = $"\'{folderId}\' in parents and trashed=false and name=\'updater.zip\'";
                 request.Spaces = "drive";
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
@@ -149,15 +187,23 @@ namespace ClassLibrary1
                     driveLink = file.Id;
                     return true;
                 }
+
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
             //if cant find then
             driveLink = "";
             return false;
-
         }
 
+        /// <summary>
+        /// Find folder in the SoftwarePublisher folder in drive,
+        /// used to find existing project project
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="rootFolderId">SoftwarePublisher folder id</param>
+        /// <param name="name">name of the folder</param>
+        /// <returns>true if folder is found</returns>
         public static bool FindFolderInRoot(Service service, string rootFolderId, string name)
         {
             string pageToken = null;
@@ -169,29 +215,32 @@ namespace ClassLibrary1
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
                 var result = request.Execute();
-                if (result.Files.Any())
-                {
-                    return true;
-                }
+                if (result.Files.Any()) return true;
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
             return false;
-
         }
 
+        /// <summary>
+        /// Downloads the file from the drive
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="filePath">path of the file where it is to be saved</param>
+        /// <param name="fileId">FileId of the file to be downloaded</param>
+        /// <returns></returns>
         public static bool DownloadFile(Service service, string filePath, string fileId)
         {
             var request = service.DriveService.Files.Get(fileId);
-            var stream = new System.IO.MemoryStream();
+            var stream = new MemoryStream();
 
             // Add a handler which will be notified on progress changes.
             // It will notify on each chunk download and when the
             // download is completed or failed.
 
-            bool downloadFailed = false;
+            var downloadFailed = false;
             request.MediaDownloader.ProgressChanged +=
-                (IDownloadProgress progress) =>
+                progress =>
                 {
                     switch (progress.Status)
                     {
@@ -219,29 +268,14 @@ namespace ClassLibrary1
 
             request.Download(stream);
 
-            File.Delete(filePath);
-            using (FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            System.IO.File.Delete(filePath);
+            using (var file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 stream.WriteTo(file);
             }
 
             return true;
         }
-
-        public static string GetRelativePath(string filespec)
-        {
-            var folder = Environment.CurrentDirectory;
-
-            Uri pathUri = new Uri(filespec);
-            // Folders must end in a slash
-            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
-                folder += Path.DirectorySeparatorChar;
-            }
-            Uri folderUri = new Uri(folder);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', '\\'));
-        }
-
 
 
     }

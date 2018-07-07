@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="DriveUtils.cs" />
     <Compile Include="IJsonWrapper.cs" />
+    <Compile Include="InstallConfigJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="Utils.cs" />

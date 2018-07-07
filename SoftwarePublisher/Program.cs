@@ -29,11 +29,6 @@ namespace SoftwarePublisher
       NAME           Name of the software.
       VERSIONNAME    Version name of the software.";
 
-        /*
-        SP.exe add (FILENAME | --all)
-        SP.exe remove (FILENAME | --all)
-        */
-
         static void Main(string[] args)
         {
 
@@ -85,6 +80,12 @@ namespace SoftwarePublisher
 
         }
 
+        /// <summary>
+        /// Helps keep the code clean for using docopt
+        /// </summary>
+        /// <param name="arguments">docopt idictionary obeject</param>
+        /// <param name="key">key to search</param>
+        /// <returns></returns>
         static ValueObject GetValue(IDictionary<string, ValueObject> arguments, string key)
         {
             ValueObject obj;

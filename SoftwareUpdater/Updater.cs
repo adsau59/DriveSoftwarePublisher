@@ -12,6 +12,10 @@ namespace SoftwareUpdater
         string folderId;
         private bool valid = true;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="valid">false if attributes doesnt point to a currect version</param>
         private Updater(bool valid)
         {
             this.versionCode = -1;
@@ -19,31 +23,34 @@ namespace SoftwareUpdater
             this.valid = valid;
         }
 
-        /**
-         * Initializes the Attributes using intall config json.
-         */
+        /// <summary>
+        /// Initializes the Attributes using intall config json.
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <param name="versionCode">version code to use</param>
+        /// <returns>Updater object</returns>
         public static Updater CreateInstaller(Service service, int versionCode=-1)
         {
             Updater updater = new Updater(true);
 
-            JsonWrapper.InstallConfigJson installConfigJson = new JsonWrapper.InstallConfigJson().LoadJsonAndReturn();
+            JsonWrapper.UpdaterInstallConfigJson updaterInstallConfigJson = new JsonWrapper.UpdaterInstallConfigJson().LoadJsonAndReturn();
             
-            updater.folderId = installConfigJson._folderId;
+            updater.folderId = updaterInstallConfigJson.FolderId;
 
             if (versionCode == -1)
-            {
                 updater.versionCode = DriveUtils.GetLatestVersion(service, updater.folderId).versionCode;
-                //Console.WriteLine($"{versionCode}");
-            }
             else
                 updater.versionCode = versionCode;
 
             return updater;
         }
 
-        /*
-         * Initializing the attributes using version json
-         */
+        /// <summary>
+        ///  Initializing the attributes using version json
+        /// </summary>
+        /// <param name="service">service object</param>
+        /// <param name="versionCode">version code to update to</param>
+        /// <returns>updater object</returns>
         public static Updater CreateUpdater(Service service, int versionCode=-1)
         {
             JsonWrapper.UpdaterVersionJson versionJson = new JsonWrapper.UpdaterVersionJson();
@@ -73,10 +80,11 @@ namespace SoftwareUpdater
 
             return updater;
         }
-        
-        /*
-         * Unzip and copy files
-         */
+
+        /// <summary>
+        /// delete files from previous update
+        /// Unzip and copy files
+        /// </summary>
         private static void UnzipFiles()
         {
             string destination = FilePath.RootDir;
@@ -114,17 +122,19 @@ namespace SoftwareUpdater
 
         }
 
-        /*
-         * check drive for new version,
-         * if there is download and run unzip
-         */
-        public bool doUpdate(Service service, bool isUpdate)
+        /// <summary>
+        /// check drive for new version,
+        /// if there is download and run unzip
+        /// </summary>
+        /// <param name="service">service object</param>
+        /// <returns>true if files successfuly updated</returns>
+        public bool doUpdate(Service service)
         {
             if (!valid)
                 return false;
 
-            VersionStruct versionStruct;
-            string fileId = DriveUtils.GetFileIdWithVersionCode(service, folderId, versionCode, out versionStruct);
+            VersionDetailStruct versionDetailStruct;
+            string fileId = DriveUtils.GetFileIdWithVersionCode(service, folderId, versionCode, out versionDetailStruct);
 
             if(fileId == null)
             {
@@ -140,7 +150,7 @@ namespace SoftwareUpdater
 
                 Console.WriteLine($"Updated to version code {versionCode}");
 
-                new JsonWrapper.UpdaterVersionJson(versionStruct).SaveJson();             
+                new JsonWrapper.UpdaterVersionJson(versionDetailStruct).SaveJson();             
                 return true;
             }
 

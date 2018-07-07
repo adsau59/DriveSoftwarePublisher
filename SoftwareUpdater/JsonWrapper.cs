@@ -8,51 +8,43 @@ using Newtonsoft.Json.Linq;
 
 namespace SoftwareUpdater
 {
+    /// <summary>
+    /// Json wrapper of json files used in this project
+    /// </summary>
     class JsonWrapper
     {
-
-        public class InstallConfigJson: IJsonWrapper.IBaseJsonWrapper
+        /// <summary>
+        /// install_config.json
+        /// saves the folder id of the software that is to be downloaded.
+        /// </summary>
+        public class UpdaterInstallConfigJson: InstallConfigJson
         {
-            public string _folderId;
-
-            public InstallConfigJson()
+            public UpdaterInstallConfigJson()
             {
             }
 
-            public InstallConfigJson(string folderId)
+            public UpdaterInstallConfigJson(string folderId) : base(folderId)
             {
-                _folderId = folderId;
             }
 
-            public string GetPath()
+            public override string GetPath()
             {
                 return FilePath.InstallConfigFile;
             }
 
-            public void LoadJson()
-            {
-                JObject rss = IJsonWrapper.LoadJObject(GetPath());
-
-                _folderId = (string) rss["folder_id"];
-            }
-
-            public void SaveJson()
-            {
-                JObject rss = new JObject(
-                    new JProperty("folder_id", _folderId));
-
-                IJsonWrapper.SaveJObject(GetPath(), rss);
-            }
-
-            public InstallConfigJson LoadJsonAndReturn()
+            public UpdaterInstallConfigJson LoadJsonAndReturn()
             {
                 LoadJson();
                 return this;
             }
 
-            
+
         }
 
+        /// <summary>
+        /// updated_files.json
+        /// Maintains the list of files that is copied in previous update.
+        /// </summary>
         public class UpdatedFilesJson : IJsonWrapper.IBaseJsonWrapper
         {
 
@@ -93,13 +85,17 @@ namespace SoftwareUpdater
             }
         }
 
+        /// <summary>
+        /// version.json
+        /// saves the current version name and version code of the software.
+        /// </summary>
         public class UpdaterVersionJson : VersionJson
         {
             public UpdaterVersionJson()
             {
             }
 
-            public UpdaterVersionJson(VersionStruct version) : base(version)
+            public UpdaterVersionJson(VersionDetailStruct versionDetail) : base(versionDetail)
             {
             }
 

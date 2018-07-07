@@ -8,9 +8,14 @@ using Newtonsoft.Json.Linq;
 
 namespace SoftwarePublisher
 {
+    /// <summary>
+    /// Json wrapper of json files used in this project
+    /// </summary>
     class JsonWrapper
     {
-
+        /// <summary>
+        /// Config file containing root folder id (SoftwarePublisher) in drive
+        /// </summary>
         public class ConfigJson : ClassLibrary1.IJsonWrapper.IBaseJsonWrapper
         {
             public string RootFolderId;
@@ -33,13 +38,13 @@ namespace SoftwarePublisher
             {
                 JObject rss = ClassLibrary1.IJsonWrapper.LoadJObject(GetPath());
 
-                RootFolderId = (string)rss["folder_id"];
+                RootFolderId = (string)rss["root_folder_id"];
             }
 
             public void SaveJson()
             {
                 JObject rss = new JObject(
-                    new JProperty("folder_id", RootFolderId));
+                    new JProperty("root_folder_id", RootFolderId));
 
                 ClassLibrary1.IJsonWrapper.SaveJObject(GetPath(), rss);
             }
@@ -51,47 +56,28 @@ namespace SoftwarePublisher
             }
         }
 
-        public class InstallConfigJson : ClassLibrary1.IJsonWrapper.IBaseJsonWrapper
+        /// <summary>
+        /// InstallConfiguration json file that is used by updater
+        /// </summary>
+        public class PublisherInstallConfigJson : InstallConfigJson
         {
-            public string FolderId;
-
-            public InstallConfigJson()
+            public PublisherInstallConfigJson()
             {
             }
 
-            public InstallConfigJson(string folderId)
+            public PublisherInstallConfigJson(string folderId) : base(folderId)
             {
-                FolderId = folderId;
             }
 
-            public string GetPath()
+            public override string GetPath()
             {
                 return FilePath.InstallConfigJsonFile;
             }
-
-            public void LoadJson()
-            {
-                JObject rss = ClassLibrary1.IJsonWrapper.LoadJObject(GetPath());
-
-                FolderId = (string)rss["root_foder_id"];
-            }
-
-            public void SaveJson()
-            {
-                JObject rss = new JObject(
-                    new JProperty("root_folder_id", FolderId));
-
-                ClassLibrary1.IJsonWrapper.SaveJObject(GetPath(), rss);
-            }
-
-            public InstallConfigJson LoadJsonAndReturn()
-            {
-                LoadJson();
-                return this;
-            }
-
         }
 
+        /// <summary>
+        /// Implementation of VersionJson
+        /// </summary>
         public class PublisherVersionJson : VersionJson
         {
             public PublisherVersionJson()

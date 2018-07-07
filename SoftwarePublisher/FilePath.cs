@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace SoftwarePublisher
 {
+    /// <summary>
+    /// File Path of all the files used in the project
+    /// </summary>
     public class FilePath
     {
 
         public static string RootDir = Environment.CurrentDirectory+"\\";
-
-        //public static string CoreFilesJsonFile = RootDir + "core_file.json";
 
         public static string IgnoreFile = RootDir + ".pubignore";
 

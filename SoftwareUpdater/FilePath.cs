@@ -2,6 +2,9 @@
 
 namespace SoftwareUpdater
 {
+    /// <summary>
+    /// File Path of all the files used in the project
+    /// </summary>
     public class FilePath
     {
         public static string RootDir = Environment.CurrentDirectory+"\\";

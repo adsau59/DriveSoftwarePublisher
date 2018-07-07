@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary1
 {
+    /// <summary>
+    /// Encapsulation of DriveService Object,
+    /// Used in DriveUtils to perform api calls.
+    /// </summary>
     public class Service
     {
         private DriveService driveService;
@@ -29,6 +33,12 @@ namespace ClassLibrary1
                            DriveService.Scope.DriveReadonly,
                            DriveService.Scope.DriveScripts };
 
+        /// <summary>
+        /// Loads credentials and permisions if exists
+        /// if not then create new
+        /// </summary>
+        /// <param name="secretPath">Path to secrete file</param>
+        /// <param name="credentialsJson">Path to credentialsJson file</param>
         public Service(string secretPath, string credentialsJson)
         {
             UserCredential credential;

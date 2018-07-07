@@ -38,9 +38,10 @@ namespace SoftwarePublisher
             softwareName = string.Empty;
         }
 
-        /**
-         * Creates Publisher object using version json
-         */
+        /// <summary>
+        /// Creates Publisher object using version json
+        /// </summary>
+        /// <returns>Publisher object</returns>
         public static Publisher LoadFromJson()
         {
             JsonWrapper.PublisherVersionJson versionJson = new JsonWrapper.PublisherVersionJson();
@@ -49,14 +50,21 @@ namespace SoftwarePublisher
             return new Publisher(versionJson.FolderId, versionJson.VersionCode, versionJson.VersionName,
                 versionJson.SoftwareName);
         }
-        
-        /**
-         * creats new folder in drive
-         * and creates a json file in out
-         */
+
+
+        /// <summary>
+        /// creats new folder in drive
+        /// and creates a json file in out</summary>
+        /// <param name="service">driver service</param>
+        /// <param name="softwareName">Name of the software</param>
+        /// <param name="versionName">version name of the new software</param>
+        /// <returns>Publisher object</returns>
         public static Publisher CreateNewPublisher(Service service, string softwareName, string versionName)
         {
             var configJson = new JsonWrapper.ConfigJson().LoadJsonAndReturn();
+
+
+            //todo if configJson doesnt exists find for SoftwarePublisher folder, if it doesnt exists create new
 
             if (DriveUtils.FindFolderInRoot(service, configJson.RootFolderId, softwareName))
             {
@@ -83,16 +91,16 @@ namespace SoftwarePublisher
                 SearchOption.AllDirectories))
                 File.Copy(newPath, newPath.Replace(sourcePath, destinationPath), true);
 
-            new JsonWrapper.InstallConfigJson(publisher.folderId).SaveJson();
+            new JsonWrapper.PublisherInstallConfigJson(publisher.folderId).SaveJson();
 
             Console.WriteLine("Created a publisher");
             return publisher;
         }
 
-        /**
-         * Copies the files to temp directory,
-         * and zips it
-         */
+        /// <summary>
+        /// Copies the files to temp directory,
+        /// and zips it
+        /// </summary>
         private static void CreateZiip()
         {
             List<string> filePaths =
@@ -130,14 +138,15 @@ namespace SoftwarePublisher
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.TempDir, FilePath.TempZipFile);
         }
-        
-        
 
-        /*
-         * Checks if version is latest,
-         * creates zip,
-         * uploads the file
-         */
+
+
+        /// <summary>
+        /// Checks if version is latest,
+        /// creates zip,
+        /// </summary>
+        /// uploads the file<param name="service">driver service</param>
+        /// <returns>drive file id of the uploaded file</returns>
         public string PublishUpdate(Service service)
         {
 
@@ -160,13 +169,15 @@ namespace SoftwarePublisher
         }
 
 
-        /**
-         * Creates updater and uploads it to drive
-         */
+        /// <summary>
+        /// Creates updater and uploads it to drive
+        /// </summary>
+        /// <param name="service">driver service</param>
+        /// <returns>file id of the update.zip file</returns>
         public string CreateUpdater(Service service)
         {
 
-            new JsonWrapper.InstallConfigJson(folderId).SaveJson();
+            new JsonWrapper.PublisherInstallConfigJson(folderId).SaveJson();
 
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.UpdaterDir, FilePath.TempZipFile);
@@ -175,9 +186,10 @@ namespace SoftwarePublisher
         }
 
 
-        /*
-         * Increases the version and updates the version name in the version.json
-         */
+        /// <summary>
+        /// Increases the version and updates the version name in the version.json
+        /// </summary>
+        /// <param name="newVersionName">version name to update</param>
         public void IncreaseVersion(string newVersionName)
         {
             Console.WriteLine($"Incrementing version from {versionName} ({versionCode}) to {newVersionName} ({versionCode+1})");
