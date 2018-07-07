@@ -64,7 +64,20 @@ namespace SoftwarePublisher
             var configJson = new JsonWrapper.ConfigJson().LoadJsonAndReturn();
 
 
-            //todo if configJson doesnt exists find for SoftwarePublisher folder, if it doesnt exists create new
+            //if configJson doesnt exists find for SoftwarePublisher folder, if it doesnt exists create new
+            if (!File.Exists(FilePath.ConfigJsonFile))
+            {
+                string folderid;
+
+                if (!DriveUtils.FindFolderInRoot(service, "root", "DefineXSoftwarePublisher", out folderid))
+                    folderid = DriveUtils.CreateFolder(service, "DefineXSoftwarePublisher", "root");
+
+                configJson.RootFolderId = folderid;
+
+                Console.WriteLine("Creating config.json");
+                configJson.SaveJson();
+
+            }
 
             if (DriveUtils.FindFolderInRoot(service, configJson.RootFolderId, softwareName))
             {

@@ -145,9 +145,9 @@ namespace ClassLibrary1
         /// </summary>
         /// <param name="service">driver service</param>
         /// <param name="name">name of the folder to be created</param>
-        /// <param name="folderId">drive folder id of the parent</param>
+        /// <param name="parentFolderId">drive folder id of the parent</param>
         /// <returns>drive folder id of the folder created</returns>
-        public static string CreateFolder(Service service, string name, string folderId)
+        public static string CreateFolder(Service service, string name, string parentFolderId)
         {
             var fileMetadata = new File
             {
@@ -155,7 +155,7 @@ namespace ClassLibrary1
                 MimeType = "application/vnd.google-apps.folder",
                 Parents = new List<string>
                 {
-                    folderId
+                    parentFolderId
                 }
             };
             var request = service.DriveService.Files.Create(fileMetadata);
@@ -203,8 +203,9 @@ namespace ClassLibrary1
         /// <param name="service">driver service</param>
         /// <param name="rootFolderId">SoftwarePublisher folder id</param>
         /// <param name="name">name of the folder</param>
+        /// <param name="folderid">folder id of the found folder</param>
         /// <returns>true if folder is found</returns>
-        public static bool FindFolderInRoot(Service service, string rootFolderId, string name)
+        public static bool FindFolderInRoot(Service service, string rootFolderId, string name, out string folderid)
         {
             string pageToken = null;
             do
@@ -215,12 +216,26 @@ namespace ClassLibrary1
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
                 var result = request.Execute();
-                if (result.Files.Any()) return true;
+                if (result.Files.Any())
+                {
+                    folderid = result.Files[0].Id;
+                    return true;
+                }
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
+            folderid = "";
             return false;
         }
+
+        /// <summary>
+        /// overload of above function
+        /// </summary>
+        public static bool FindFolderInRoot(Service service, string rootFolderId, string name)
+        {
+            return FindFolderInRoot(service, rootFolderId,name, out _);
+        }
+
 
         /// <summary>
         /// Downloads the file from the drive

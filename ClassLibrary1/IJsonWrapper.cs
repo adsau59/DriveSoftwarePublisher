@@ -33,8 +33,16 @@ namespace ClassLibrary1
         /// <returns>JObject Object</returns>
         public static JObject LoadJObject(string path)
         {
-            string jsonString = File.ReadAllText(path);
-            JObject rss = JObject.Parse(jsonString);
+            JObject rss = null;
+            try
+            {
+                string jsonString = File.ReadAllText(path);
+                rss = JObject.Parse(jsonString);
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                Console.WriteLine($"{path} not found");
+            }
 
             return rss;
         }

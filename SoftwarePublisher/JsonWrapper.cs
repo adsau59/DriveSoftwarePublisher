@@ -38,6 +38,9 @@ namespace SoftwarePublisher
             {
                 JObject rss = ClassLibrary1.IJsonWrapper.LoadJObject(GetPath());
 
+                if(rss == null)
+                    return;
+
                 RootFolderId = (string)rss["root_folder_id"];
             }
 
