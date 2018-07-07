@@ -9,6 +9,6 @@
 *.sdf
 *.user
 .vs/
-*/obj/
+*/obj/*
+*/bin/*
 packages/
-*/bin/

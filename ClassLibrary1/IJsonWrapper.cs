@@ -20,11 +20,6 @@ namespace ClassLibrary1
 
         }
 
-        public interface IExtraMethodForJsonWrapper<T> where T : IBaseJsonWrapper
-        {
-            T LoadJsonAndReturn();
-        }
-
 
         public static JObject LoadJObject(string path)
         {

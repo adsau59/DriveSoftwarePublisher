@@ -15,7 +15,7 @@ namespace ClassLibrary1
     public class DriveUtils
     {
 
-        public static string GetIdWithVersionCode(Service service, string folderId, int versionCode)
+        public static string GetFileIdWithVersionCode(Service service, string folderId, int versionCode, out VersionStruct version)
         {
             List<int> versionList = new List<int>();
             string pageToken = null;
@@ -23,70 +23,69 @@ namespace ClassLibrary1
             do
             {
                 var request = service.DriveService.Files.List();
-                request.Q = "'" + folderId + "' in parents and trashed=false and name='"+versionCode+".zip'";
+                request.Q = $"\'{folderId}\' in parents and trashed=false and name contains \'{versionCode}--\'";
                 request.Spaces = "drive";
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
                 result = request.Execute();
-                foreach (var file in result.Files)
+
+                if (result.Files.Count > 0)
                 {
-                    return file.Id;
+                    string[] nameParts = result.Files[0].Name.Split(new[] { ".zip" }, StringSplitOptions.None)[0].Split(new[] { "--" }, StringSplitOptions.None);
+                    version = new VersionStruct(folderId, Int32.Parse(nameParts[0]), nameParts[2], nameParts[1]);
+                    return result.Files[0].Id;
                 }
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
+            version = new VersionStruct();
             return null;
         }
 
-        public static string GetLatestVersionCode(Service service, string folderId, out int versionCode)
+        /*
+         * Get VersionJson object of the latest version
+         */
+        public static VersionStruct GetLatestVersion(Service service, string folderId)
         {
 
             List<int> versionList = new List<int>();
             string pageToken = null;
+            Google.Apis.Drive.v3.Data.File latestFile = null;
             FileList result;
             do
             {
                 var request = service.DriveService.Files.List();
-                request.Q = "'"+folderId+ "' in parents and trashed=false";
+                request.Q = $"\'{folderId}\' in parents and trashed=false";
                 request.Spaces = "drive";
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
                 result = request.Execute();
+
+                
+                int largestVersion = -1;
                 foreach (var file in result.Files)
                 {
-                    //Console.WriteLine(String.Format(
-                    //        "Found file: {0} ({1})", file.Name, file.Id));
 
-                    var leftPart = file.Name.Split('.')[0];
-                    int number;
+                    int version = Int32.Parse(file.Name.Split(new[] { "--" }, StringSplitOptions.None)[0]);
+                    if (largestVersion < version)
+                    {
+                        largestVersion = version;
+                        latestFile = file;
+                    }
 
-                    if(int.TryParse(leftPart, out number))
-                        versionList.Add(number);
                 }
+
+
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
-            
-            if (versionList.Count == 0)
-            {
-                versionCode = -1;
-                return "";
-            }
 
-            versionCode = versionList.Max();
+            if (latestFile == null)
+                return new VersionStruct();
 
-            foreach (var file in result.Files)
-            {
-                if (file.Name == versionCode + ".zip")
-                    return file.Id;
-            }
 
-            return "";
-        }
-
-        public static string GetLatestVersionCode(Service service, string folderId)
-        {
-            int temp;
-            return GetLatestVersionCode(service, folderId, out temp);
+            //versioncode--softwarename--versionname.zip
+            string[] nameParts = latestFile.Name.Split(new[] { ".zip" }, StringSplitOptions.None)[0].Split(new[] { "--" }, StringSplitOptions.None);
+            return new VersionStruct(folderId, Int32.Parse(nameParts[0]), nameParts[2], nameParts[1]);
         }
 
         public static string IdToDirectDownloadLink(String fileId)

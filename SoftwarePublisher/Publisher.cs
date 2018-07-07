@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 using ClassLibrary1;
 using File = System.IO.File;
 
@@ -37,24 +38,25 @@ namespace SoftwarePublisher
             softwareName = string.Empty;
         }
 
-        private static Publisher LoadFromJson()
+        /**
+         * Creates Publisher object using version json
+         */
+        public static Publisher LoadFromJson()
         {
-            JsonWrappers.VersionJson versionJson = new JsonWrappers.VersionJson().LoadJsonAndReturn();
+            JsonWrapper.PublisherVersionJson versionJson = new JsonWrapper.PublisherVersionJson();
+            versionJson.LoadJson();
 
-            return new Publisher(versionJson.folderId, versionJson.versionCode, versionJson.versionName,
-                versionJson.softwareName);
+            return new Publisher(versionJson.FolderId, versionJson.VersionCode, versionJson.VersionName,
+                versionJson.SoftwareName);
         }
-
-
-        public static Publisher CreateUpdatePublisher()
-        {
-            return Publisher.LoadFromJson();
-        }
-
-        //creats new folder in drive and creates a json file in out
+        
+        /**
+         * creats new folder in drive
+         * and creates a json file in out
+         */
         public static Publisher CreateNewPublisher(Service service, string softwareName, string versionName)
         {
-            var configJson = new JsonWrappers.ConfigJson().LoadJsonAndReturn();
+            var configJson = new JsonWrapper.ConfigJson().LoadJsonAndReturn();
 
             if (DriveUtils.FindFolderInRoot(service, configJson.RootFolderId, softwareName))
             {
@@ -66,7 +68,7 @@ namespace SoftwarePublisher
             System.IO.Directory.CreateDirectory(FilePath.ConfigDir);
 
             Publisher publisher = new Publisher(DriveUtils.CreateFolder(service, softwareName, configJson.RootFolderId), 1, versionName, softwareName);
-            new JsonWrappers.VersionJson(publisher.folderId, publisher.versionCode, publisher.versionName, publisher.softwareName).SaveJson();
+            new JsonWrapper.PublisherVersionJson(publisher.folderId, publisher.versionCode, publisher.versionName, publisher.softwareName).SaveJson();
             
             var sourcePath = FilePath.BaseUpdaterDir;
             var destinationPath = FilePath.UpdaterDir;
@@ -81,97 +83,66 @@ namespace SoftwarePublisher
                 SearchOption.AllDirectories))
                 File.Copy(newPath, newPath.Replace(sourcePath, destinationPath), true);
 
-            new JsonWrappers.InstallConfigJson(publisher.folderId).SaveJson();
-            
-            new JsonWrappers.CoreFilesJson().SaveJson();
+            new JsonWrapper.InstallConfigJson(publisher.folderId).SaveJson();
 
             Console.WriteLine("Created a publisher");
             return publisher;
         }
 
-        public bool AddFileToCoreFilesJson(string filePath)
-        {
-            JsonWrappers.CoreFilesJson coreFilesJson = new JsonWrappers.CoreFilesJson().LoadJsonAndReturn();
-
-            if (coreFilesJson.FileList.Any(fp => filePath == fp))
-            {
-                Console.Write("File is already included in core_files.json .");
-                return false;
-            }
-            
-            coreFilesJson.FileList.Add(filePath);
-
-            coreFilesJson.SaveJson();
-
-            return true;
-        }
-
-        public bool RemoveFileFromCoreFilesJson(string filePath)
-        {
-            JsonWrappers.CoreFilesJson coreFilesJson = new JsonWrappers.CoreFilesJson().LoadJsonAndReturn();
-
-            if (coreFilesJson.FileList.Any(fp => filePath == fp))
-            {
-                coreFilesJson.FileList.Remove(filePath);
-
-                coreFilesJson.SaveJson();
-                return true;
-            }
-
-            Console.WriteLine("File is not included in core_files.");
-
-
-
-            return false;
-        }
-
-        public void AddAllFilesToCoreFilesJson()
-        {
-
-            List<string> files =
-                new List<string>(Directory.GetFiles(FilePath.RootDir, "*", SearchOption.AllDirectories));
-
-            files.RemoveAll(elem => elem.Contains(".publish"));
-
-            List<string> newFiles = new List<string>();
-
-            foreach (var file in files)
-            {
-                newFiles.Add(DriveUtils.GetRelativePath(file));
-            }
-
-            new JsonWrappers.CoreFilesJson(newFiles).SaveJson();
-
-        }
-
-        public void RemoveAllFilesFromCoreFIlesJson()
-        {
-            new JsonWrappers.CoreFilesJson(new List<string>()).SaveJson();
-        }
-
+        /**
+         * Copies the files to temp directory,
+         * and zips it
+         */
         private static void CreateZiip()
         {
-            JsonWrappers.CoreFilesJson coreFilesJson = new JsonWrappers.CoreFilesJson().LoadJsonAndReturn();
+            List<string> filePaths =
+                new List<string>(Directory.GetFiles(FilePath.RootDir, "*", SearchOption.AllDirectories));
 
-            foreach (var filePath in coreFilesJson.FileList)
+            for (int i = 0; i < filePaths.Count; i++)
+                filePaths[i] = filePaths[i].Remove(filePaths[i].IndexOf(FilePath.RootDir), FilePath.RootDir.Length);
+
+            filePaths.RemoveAll(elem => elem.Contains(".publish"));
+            filePaths.RemoveAll(elem => elem.Contains(".pubignore"));
+
+            //todo .pubignore
+      
+            //if .pubignore exists
+            if (File.Exists(FilePath.IgnoreFile))
             {
-                System.IO.FileInfo file = new System.IO.FileInfo(FilePath.TempDir+filePath);
-                file.Directory?.Create(); // If the directory already exists, this method does nothing.
+                //itrate on each line
+                String[] ignoreList = File.ReadAllLines(FilePath.IgnoreFile);
+
+                foreach (var ignore in ignoreList)
+                    //do regex on each filepath
+                    //if regex is true remove the file
+                    filePaths.RemoveAll(s => Regex.Match(s, ignore, RegexOptions.IgnoreCase).Success);
+            }
+
+            Utils.Empty(new DirectoryInfo(FilePath.TempDir));
+            foreach (var filePath in filePaths)
+            {
+                Console.WriteLine($"Adding: {filePath}");
+                System.IO.FileInfo file = new System.IO.FileInfo(FilePath.TempDir+ filePath);
+                file.Directory?.Create();
                 System.IO.File.WriteAllText(file.FullName, File.ReadAllText(filePath));
             }
 
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.TempDir, FilePath.TempZipFile);
         }
-
+        
         
 
-        
-
+        /*
+         * Checks if version is latest,
+         * creates zip,
+         * uploads the file
+         */
         public string PublishUpdate(Service service)
         {
-            int currentVersion;
-            DriveUtils.GetLatestVersionCode(service, folderId, out currentVersion);
+
+            int currentVersion = DriveUtils.GetLatestVersion(service, folderId).versionCode;
+
             if(currentVersion >= versionCode)
             {
                 Console.WriteLine("Version is not new, Version Available: "+currentVersion);
@@ -182,14 +153,20 @@ namespace SoftwarePublisher
 
             Console.WriteLine($"Version {versionName} ({versionCode}) published successfully.");
 
-            return DriveUtils.UploadFileToCloud(service, versionCode+".zip", folderId, FilePath.TempZipFile);
+            string name = $"{versionCode.ToString()}--{softwareName}--{versionName}";
+
+            return DriveUtils.UploadFileToCloud(service, name + ".zip", folderId, FilePath.TempZipFile);
 
         }
 
+
+        /**
+         * Creates updater and uploads it to drive
+         */
         public string CreateUpdater(Service service)
         {
 
-            new JsonWrappers.InstallConfigJson(folderId).SaveJson();
+            new JsonWrapper.InstallConfigJson(folderId).SaveJson();
 
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.UpdaterDir, FilePath.TempZipFile);
@@ -197,6 +174,10 @@ namespace SoftwarePublisher
             return DriveUtils.UploadFileToCloud(service, "updater.zip", folderId, FilePath.TempZipFile);
         }
 
+
+        /*
+         * Increases the version and updates the version name in the version.json
+         */
         public void IncreaseVersion(string newVersionName)
         {
             Console.WriteLine($"Incrementing version from {versionName} ({versionCode}) to {newVersionName} ({versionCode+1})");
@@ -204,7 +185,7 @@ namespace SoftwarePublisher
             versionCode++;
             versionName = newVersionName;
 
-            new JsonWrappers.VersionJson(folderId, versionCode, versionName, softwareName).SaveJson();
+            new JsonWrapper.PublisherVersionJson(folderId, versionCode, versionName, softwareName).SaveJson();
         }        
 
         

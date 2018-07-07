@@ -20,18 +20,19 @@ namespace SoftwarePublisher
 
     Usage:
       SP.exe init NAME VERSIONNAME
-      SP.exe add (FILENAME | --all)
-      SP.exe remove (FILENAME | --all)
-      SP.exe increase_version VERSIONNAME
-      SP.exe commit
-      SP.exe get_updater
+      SP.exe upversion VERSIONNAME
+      SP.exe push
+      SP.exe getupdater
 
     Options:
       -h --help      Show this screen.
       NAME           Name of the software.
-      VERSIONNAME    Version name of the software.  
+      VERSIONNAME    Version name of the software.";
 
-    ";
+        /*
+        SP.exe add (FILENAME | --all)
+        SP.exe remove (FILENAME | --all)
+        */
 
         static void Main(string[] args)
         {
@@ -40,19 +41,24 @@ namespace SoftwarePublisher
 
             var arguments = new Docopt().Apply(usage, args, exit: true);
 
+            //initialize publisher
             if (GetValue(arguments, "init").IsTrue)
             {
                 string name = GetValue(arguments, "NAME").ToString();
                 string version = GetValue(arguments, "VERSIONNAME").ToString();
                 Publisher.CreateNewPublisher(service, name, version);
             }
-            else if (GetValue(arguments, "commit").IsTrue)
+
+            //upload files on drive
+            else if (GetValue(arguments, "push").IsTrue)
             {
-                Publisher.CreateUpdatePublisher().PublishUpdate(service);
+                Publisher.LoadFromJson().PublishUpdate(service);
             }
-            else if (GetValue(arguments, "get_updater").IsTrue)
+
+            //get updater
+            else if (GetValue(arguments, "getupdater").IsTrue)
             {
-                var publisher = Publisher.CreateUpdatePublisher();
+                var publisher = Publisher.LoadFromJson();
 
                 string driveId;
                 if (!DriveUtils.GetUpdaterLink(service, publisher.folderId, out driveId))
@@ -64,35 +70,16 @@ namespace SoftwarePublisher
                 Console.WriteLine(DriveUtils.IdToDirectDownloadLink(driveId));
 
             }
-            else if (GetValue(arguments, "increase_version").IsTrue)
+
+            //increase version
+            else if (GetValue(arguments, "upversion").IsTrue)
             {
                 var versionName = GetValue(arguments, "VERSIONNAME").ToString();
-                Publisher.CreateUpdatePublisher().IncreaseVersion(versionName);
+                Publisher.LoadFromJson().IncreaseVersion(versionName);
             }
-            else if (GetValue(arguments, "add").IsTrue)
-            {
-                if(GetValue(arguments, "--all").IsTrue)
-                    Publisher.CreateUpdatePublisher().AddAllFilesToCoreFilesJson();
-                else
-                {
-                    Publisher.CreateUpdatePublisher()
-                        .AddFileToCoreFilesJson(GetValue(arguments, "FILENAME").ToString());
-                }
-            }
-            else if (GetValue(arguments, "remove").IsTrue)
-            {
-                if (GetValue(arguments, "--all").IsTrue)
-                    Publisher.CreateUpdatePublisher().RemoveAllFilesFromCoreFIlesJson();
-                else
-                {
-                    Publisher.CreateUpdatePublisher()
-                        .RemoveFileFromCoreFilesJson(GetValue(arguments, "FILENAME").ToString());
-                }
-            }
-
 
 #if DEBUG
-            Console.WriteLine("Press Enter to exit...");
+        Console.WriteLine("Press Enter to exit...");
             Console.ReadLine();
 #endif
 

@@ -10,15 +10,20 @@ namespace SoftwarePublisher
     {
 
         public static string RootDir = Environment.CurrentDirectory+"\\";
-        public static string CoreFilesJsonFile = RootDir + "core_file.json";
-        public static string VersionJsonFile = RootDir + "version.json";
+
+        //public static string CoreFilesJsonFile = RootDir + "core_file.json";
+
+        public static string IgnoreFile = RootDir + ".pubignore";
 
         public static string ConfigDir = RootDir+ ".publisher\\";
+
+        public static string VersionJsonFile = ConfigDir + "version.json";
         public static string TempDir = ConfigDir + "temp\\";
         public static string TempZipFile = ConfigDir + "temp.zip";
 
         public static string UpdaterDir = ConfigDir + "updater\\.updater\\";
-        public static string InstallConfigJsonFile = UpdaterDir + "install_config.json";
+        public static string UpdaterExeDir = UpdaterDir + "updater\\";
+        public static string InstallConfigJsonFile = UpdaterExeDir + "install_config.json";
 
         public static string ExeRootDir = AppDomain.CurrentDomain.BaseDirectory;
         public static string ConfigJsonFile = ExeRootDir + "config.json";

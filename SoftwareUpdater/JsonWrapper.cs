@@ -11,7 +11,7 @@ namespace SoftwareUpdater
     class JsonWrapper
     {
 
-        public class InstallConfigJson: IJsonWrapper.IBaseJsonWrapper, IJsonWrapper.IExtraMethodForJsonWrapper<InstallConfigJson>
+        public class InstallConfigJson: IJsonWrapper.IBaseJsonWrapper
         {
             public string _folderId;
 
@@ -53,98 +53,63 @@ namespace SoftwareUpdater
             
         }
 
-        public class VersionJson : IJsonWrapper.IBaseJsonWrapper, IJsonWrapper.IExtraMethodForJsonWrapper<VersionJson>
+        public class UpdatedFilesJson : IJsonWrapper.IBaseJsonWrapper
         {
-            public string folderId;
-            public int versionCode;
-            public string versionName;
-            public string softwareName;
 
-            public VersionJson()
+            public List<string> updatedFiles = new List<string>();
+
+
+            public UpdatedFilesJson()
             {
             }
 
-            public VersionJson(string folderId, int versionCode, string versionName, string softwareName)
+            public UpdatedFilesJson(List<string> updatedFiles)
             {
-                this.folderId = folderId;
-                this.versionCode = versionCode;
-                this.versionName = versionName;
-                this.softwareName = softwareName;
+                this.updatedFiles = updatedFiles;
             }
 
             public string GetPath()
             {
-                return FilePath.VersionJsonFile;
+                return FilePath.UpdatedFiles;
             }
 
             public void LoadJson()
             {
-                JObject rss = IJsonWrapper.LoadJObject(GetPath());
+                JObject rss = ClassLibrary1.IJsonWrapper.LoadJObject(GetPath());
+                JArray jArray = (JArray)rss["updated_files"];
+                updatedFiles = jArray.Select(c => (string)c).ToList();
 
-                folderId = (string)rss["folder_id"];
-                versionCode = (int)rss["version_code"];
-                versionName = (string)rss["version_name"];
-                softwareName = (string)rss["software_name"];
             }
 
             public void SaveJson()
             {
                 JObject rss = new JObject(
-                    new JProperty("folder_id", folderId),
-                    new JProperty("version_code", versionCode),
-                    new JProperty("version_name", versionName),
-                    new JProperty("software_name", softwareName));
-
-                IJsonWrapper.SaveJObject(GetPath(), rss);
-            }
-
-            public VersionJson LoadJsonAndReturn()
-            {
-                LoadJson();
-                return this;
-            }
-
-        }
-
-        public class CoreFilesJson : IJsonWrapper.IBaseJsonWrapper, IJsonWrapper.IExtraMethodForJsonWrapper<CoreFilesJson>
-        {
-            public List<string> FileList;
-
-            public CoreFilesJson()
-            {
-            }
-
-            public CoreFilesJson(List<string> fileList)
-            {
-                FileList = fileList;
-            }
-
-            public string GetPath()
-            {
-                return FilePath.CoreFilesJsonFile;
-            }
-
-            public void LoadJson()
-            {
-                JObject rss = IJsonWrapper.LoadJObject(GetPath());
-                JArray jArray = (JArray)rss["core_files"];
-                FileList = jArray.Select(c => (string)c).ToList();
-            }
-
-            public void SaveJson()
-            {
-                JObject rss = new JObject(
-                    new JProperty("core_files", new JArray(
-                        from f in FileList select new JValue(f)
+                    new JProperty("updated_files", new JArray(
+                        from f in updatedFiles select new JValue(f)
                     )));
 
-                IJsonWrapper.SaveJObject(GetPath(), rss);
+                ClassLibrary1.IJsonWrapper.SaveJObject(GetPath(), rss);
+
+            }
+        }
+
+        public class UpdaterVersionJson : VersionJson
+        {
+            public UpdaterVersionJson()
+            {
             }
 
-            public CoreFilesJson LoadJsonAndReturn()
+            public UpdaterVersionJson(VersionStruct version) : base(version)
             {
-                LoadJson();
-                return this;
+            }
+
+            public UpdaterVersionJson(string folderId, int versionCode, string versionName, string softwareName) : base(folderId, versionCode, versionName, softwareName)
+            {
+            }
+
+            public override string GetPath()
+            {
+                return FilePath.VersionJsonFile;
             }
         }
 

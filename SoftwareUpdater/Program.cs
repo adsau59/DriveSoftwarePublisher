@@ -21,20 +21,12 @@ namespace SoftwareUpdater
 
     Options:
       -h --help      Show this screen.
-      VERSIONCODE    Version to install/update.
-
-    ";
+      VERSIONCODE    Version to install/update.";
 
         static void Main(string[] args)
         {
             Service service = new Service(FilePath.SecretJsonFile, FilePath.CredentialsJsonFile);
             var arguments = new Docopt().Apply(usage, args, exit: true);
-#if false
-            foreach (var argument in arguments)
-            {
-                Console.WriteLine("{0} = {1}", argument.Key, argument.Value);
-            }
-#endif
 
             if (GetValue(arguments, "install").IsTrue)
             {
