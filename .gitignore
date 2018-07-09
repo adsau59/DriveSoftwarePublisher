@@ -13,3 +13,4 @@
 */bin/*
 packages/
 out/
+*/client_secret.json

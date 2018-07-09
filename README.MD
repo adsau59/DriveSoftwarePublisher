@@ -68,8 +68,14 @@ You can contribute this project by,
 
 Before creating issues for bugs, or suggesting new feature ideas, check out the [Trello Board](https://trello.com/b/G1UKrXN6) if it is already been found/suggested.
 
+### Whats new
+Check out [changes](https://github.com/adsau59/DriveSoftwarePublisher/blob/master/changes) for each commits.
+
 ### Contact
 If you have any problems or you want to contact me for feature ideas or want to collaborate in development you can contact me on [DefineX Community discord server](https://discord.gg/V6e2fpc)
 
 ### Feeling generous?
 You can donate me on [PayPal](https://www.paypal.me/AdamSaudagar).
+
+### Licencse
+Check out the licence over [here](https://github.com/adsau59/DriveSoftwarePublisher/blob/master/LICENSE)
