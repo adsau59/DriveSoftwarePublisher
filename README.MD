@@ -7,7 +7,9 @@ Ever wanted to send your software your client but you can't afford a to hire a s
 This project might help programmers and software developers who have very low budget and this will also help open source developers to publish their software without any investement at all.
 
 ### Demo video
-<center>[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/TdtkTxmOgw8/0.jpg)](https://www.youtube.com/watch?v=TdtkTxmOgw8)</center>
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=TdtkTxmOgw8"><img src="https://img.youtube.com/vi/TdtkTxmOgw8/0.jpg" alt="IMAGE ALT TEXT"></a>
+</div>
 
 ### Feature
 By using DriveSP you can,
@@ -16,7 +18,7 @@ By using DriveSP you can,
 - Ignore the files and folders you don't want to include in the update using .pubignore file.
 
 ### I just want to use the software.
-You can download an alpha release from [here]()
+You can download an alpha release from [here](https://github.com/adsau59/DriveSoftwarePublisher/releases), put the SP.exe inside environment variables file path for ease of use.
 
 ### Technology Stack
 DriveSP is made using
@@ -30,6 +32,34 @@ DriveSP solution contains 3 projects,
 - Publisher, it is used to create projects, create updates, create updater for clients.
 - Updater, it is used by clients to install updates, and even install selected version of the software.
 - CommonScripts, contains all the command classes used by both the projects.
+
+Definitions:
+- A project has 4 attributes
+	- Folder ID, which is the folder id in the drive.
+	- Software name, the name of the folder created inside ```DefineXSoftwarePublisher``` folder.
+	- Version name, is the name of the version created.
+	- Version code, is the version number started from 1 and increments each time you increase the version.
+- SP.exe is the executable file for publisher.
+- SU.exe is the executable file for updater.
+
+Working of Publisher, 
+
+- When ```SP init SOFTWARENAME VERSIONNAME``` is called,
+	- A project is created on drive inside ```DefineXSoftwarePublisher``` folder inside ```root```.
+	- It also initializes files it needs under .publish folder.
+- When ```SP push``` is called, 
+	- It searches for .pubignore file in the root directory of your project folder and then ignore all the files which returns true on regex check for the patterns on each line.
+	- Then it creates a zip with all the files and uploads it to drive with the file name ```versioncode--softwarename--versionname.zip``` inside the folder ```SOFTWARENAME``` in the ```DefineXSoftwarePublisher``` folder inside ```root```.
+- When ```SP upversion VERSIONNAME``` is use,
+	- It increases the version code of the project and changes its version name inside the version.json file.
+	- It should be called before pushing a new version.
+- When ```SP getupdater``` is called, it returns a link to ```updater.zip``` file which is to be given to the clients to download your software.
+
+Working of Updater,
+
+- When ```SU install [VERSIONCODE]``` is called,
+	- Install the software with specified version, or the latest version if not specified
+- ```SU update [VERSIONCODE]``` does same thing as install for now, except it prompts if you have already installed new version
 
 ### How to use it?
 - Go to [Google Cloud Platform Console](https://console.cloud.google.com/), and create a project.
@@ -78,4 +108,4 @@ If you have any problems or you want to contact me for feature ideas or want to 
 You can donate me on [PayPal](https://www.paypal.me/AdamSaudagar).
 
 ### Licencse
-Check out the licence over [here](https://github.com/adsau59/DriveSoftwarePublisher/blob/master/LICENSE)
+This project is licence to the MIT License, check out the full licence over [here](https://github.com/adsau59/DriveSoftwarePublisher/blob/master/LICENSE).

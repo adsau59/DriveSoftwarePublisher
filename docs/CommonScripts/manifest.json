@@ -1,0 +1,225 @@
+{
+  "homepages": [],
+  "source_base_path": "D:/Projects/SoftwarePublisher/ClassLibrary1",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "l+5D/CfvVus8Ukz6QlD0VA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "tMsf1Tfa/Wgcd2p32avZMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "xVlQaX7Tk85omoiWv3O+Ag=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "gQUTpevZ5pWuamVWIK+qjg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.DriveUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.DriveUtils.html",
+          "hash": "Sdqr5bafaonT0j3TLBp8cw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.IJsonWrapper.IBaseJsonWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.IJsonWrapper.IBaseJsonWrapper.html",
+          "hash": "avvsqMRoEyHp0Jd5IYEsdw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.IJsonWrapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.IJsonWrapper.html",
+          "hash": "DYlZv5XQAsSh7bMx6g4Gkw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.InstallConfigJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.InstallConfigJson.html",
+          "hash": "nc7dBA5lGmhUTlfm/XKfwg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.Service.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.Service.html",
+          "hash": "LiwLB9Wd91po67g5lI25rw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.Utils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.Utils.html",
+          "hash": "Ds/RfysQUG3lzVMioaGm8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.VersionDetailStruct.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.VersionDetailStruct.html",
+          "hash": "wbYMMLgd80bKuDClGm79cw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.VersionJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.VersionJson.html",
+          "hash": "3r38znCOtW/zCpdJs+Q77A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/ClassLibrary1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ClassLibrary1.html",
+          "hash": "Zpljda2Pytk7zEUYKIAozQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "obj/api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "9GXad7gyMBxzwdrnZdgLBA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "frPdeW5hGroGiyexwMQIhg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build"
+      },
+      "processors": {
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build"
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: last post processor info is null.",
+        "incrementalPhase": "postProcessing"
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
