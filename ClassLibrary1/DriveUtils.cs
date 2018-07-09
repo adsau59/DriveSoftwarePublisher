@@ -76,6 +76,9 @@ namespace ClassLibrary1
                 var largestVersion = -1;
                 foreach (var file in result.Files)
                 {
+                    if(file.Name == "updater.zip")
+                        continue;
+
                     var version = Utils.GetVersionCodeFromName(file.Name);
                     if (largestVersion < version)
                     {

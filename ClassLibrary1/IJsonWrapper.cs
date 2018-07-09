@@ -43,6 +43,10 @@ namespace ClassLibrary1
             {
                 Console.WriteLine($"{path} not found");
             }
+            catch (DirectoryNotFoundException e)
+            {
+                Console.WriteLine($"{path} not found");
+            }
 
             return rss;
         }
@@ -54,6 +58,8 @@ namespace ClassLibrary1
         /// <param name="rss">JObject object</param>
         public static void SaveJObject(string path, JObject rss)
         {
+            //todo create directory if not exist
+            System.IO.Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.WriteAllText(path, rss.ToString());
         }
 

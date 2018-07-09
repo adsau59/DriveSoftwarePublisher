@@ -25,8 +25,8 @@ namespace SoftwareUpdater
 
         static void Main(string[] args)
         {
-            Service service = new Service(FilePath.SecretJsonFile, FilePath.CredentialsJsonFile);
             var arguments = new Docopt().Apply(usage, args, exit: true);
+            Service service = new Service(FilePath.SecretJsonFile, FilePath.CredentialsJsonFile);
 
 
             //install command

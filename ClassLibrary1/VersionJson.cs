@@ -68,6 +68,12 @@ namespace ClassLibrary1
         {
             JObject rss = IJsonWrapper.LoadJObject(GetPath());
 
+            if (rss == null)
+            {
+                Console.WriteLine("version.json was not found, please initialize the publisher first or contact the developer.");
+                return;
+            }
+
             folderId = (string)rss["folder_id"];
             versionCode = (int)rss["version_code"];
             versionName = (string)rss["version_name"];

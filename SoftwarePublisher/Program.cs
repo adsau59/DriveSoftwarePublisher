@@ -32,9 +32,9 @@ namespace SoftwarePublisher
         static void Main(string[] args)
         {
 
+            var arguments = new Docopt().Apply(usage, args, exit: true);
             var service = new Service(FilePath.SecretJsonFile, FilePath.CredentialsJsonFile);
 
-            var arguments = new Docopt().Apply(usage, args, exit: true);
 
             //initialize publisher
             if (GetValue(arguments, "init").IsTrue)

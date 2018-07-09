@@ -15,6 +15,8 @@ namespace ClassLibrary1
         /// <param name="directory">directory of the folder to be emptied</param>
         public static void Empty(System.IO.DirectoryInfo directory)
         {
+            if(!Directory.Exists(directory.FullName))
+                return;
             foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
             foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
         }

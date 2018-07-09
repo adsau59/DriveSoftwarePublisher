@@ -22,8 +22,8 @@ namespace SoftwarePublisher
         public static string TempDir = ConfigDir + "temp\\";
         public static string TempZipFile = ConfigDir + "temp.zip";
 
-        public static string UpdaterDir = ConfigDir + "updater\\.updater\\";
-        public static string UpdaterExeDir = UpdaterDir + "updater\\";
+        public static string UpdaterDir = ConfigDir + "updater\\";
+        public static string UpdaterExeDir = UpdaterDir + ".updater\\";
         public static string InstallConfigJsonFile = UpdaterExeDir + "install_config.json";
 
         public static string ExeRootDir = AppDomain.CurrentDomain.BaseDirectory;

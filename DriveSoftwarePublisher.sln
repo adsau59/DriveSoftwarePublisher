@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwarePublisher", "SoftwarePublisher\SoftwarePublisher.csproj", "{90F65717-3B64-41CD-9C9F-F415001E9443}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publisher", "SoftwarePublisher\Publisher.csproj", "{90F65717-3B64-41CD-9C9F-F415001E9443}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareUpdater", "SoftwareUpdater\SoftwareUpdater.csproj", "{6A8515EF-BDE5-4865-8F64-0E69754C619E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "SoftwareUpdater\Updater.csproj", "{6A8515EF-BDE5-4865-8F64-0E69754C619E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonScripts", "ClassLibrary1\CommonScripts.csproj", "{913A0CA8-302B-4536-A828-AFD9397CCA95}"
 EndProject
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38073717-AD04-4EDF-A02A-09049787A968}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,29 @@
+dd/mm/yy
+
+09/07/2018:
+	Created README.MD
+	
+	CommonScripts:
+		DriveUtils.cs
+			Skip update.zip file while searching version files.
+		
+		IJsonWrapper.cs
+			When a directory for json file is not found, create it.
+			
+			Added temporary execption handling (will rework on later patches) 
+		
+		Added client_secret.json in project
+		
+	Publisher:
+		Removed config.json file from project.
+		
+		Fixed file paths in FilePath.cs
+	
+		Removed client_secret.json from project
+		
+		Moved command line check (in Program.cs) on top to initializes drive services when command line is correct.
+		
+	Updater:
+		Removed config.json file from project.
+		
+		Moved command line check (in Program.cs) on top to initializes drive services when command line is correct.
