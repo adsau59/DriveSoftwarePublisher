@@ -1,5 +1,60 @@
 dd/mm/yy
 
+26/07/2018:
+	Ported to .NET Core.
+	
+	Rename folders to match VSProject names in the solution.
+	
+	Rewrote the code to be more object oriented:
+		Created Project.cs, Version.cs
+		Changed Publisher.cs and Updater.cs to be more object oriented:
+			Contains Project object
+			Contians only the functions used in thier own VSProject.
+		
+	Tweaks to make the code cleaner:
+		Made Service object static, instead of passing it as an argument in every method.
+		Made a static Load() method for each Json files to create the object and load the json file.
+		Created DocoptWrapper:
+			 Wrapper class to make using docopt a bit easier.
+		Removed JsonWrapper class form all the projects and created individual class for each json file.
+		Program.cs of VSProject Publisher and Updater now only calls methods from Publisher.cs and Updater.cs respectivly.
+		Console.WriteLine() calls only takes place in Publisher.cs and Updater.cs
+		
+	Publisher now doesn't copy the updater during initialization instead it copies it in temp when creating updater (when getupdater is called).
+	
+	Added Features:
+		Publsiher:
+			initialize without versionName
+			
+			setversion
+				set to target version by specifing VersionCode and VersionName,
+				use --force option to set even if the target version exists on drive.
+				
+			push now has force option to delete the existing version on drive with same VersionCode that is being uploaded.
+			
+			pushnow
+				increase version and push by just one command.
+				
+			drop
+				delete a version which is on drive.
+				
+			showversions
+				Display all the versions on drive.
+				
+		Updater
+			install
+				VersionName or VersionCode now either can be used to target install version.
+				
+			checkupdate
+				check if new version is available.
+				
+			showversions
+				Display all the versions on drive.
+				
+	Removed Features:
+		Updater
+			update command is removed as it was similar to install command and served no purpose
+
 09/07/2018:
 	Created README.MD
 	

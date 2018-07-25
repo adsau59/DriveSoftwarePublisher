@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Updater": {
+      "commandName": "Project",
+      "commandLineArgs": "checkupdate",
+      "workingDirectory": "bin\\Debug"
+    }
+  }
+}

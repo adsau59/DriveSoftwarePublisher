@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Publisher": {
+      "commandName": "Project",
+      "commandLineArgs": "showversions",
+      "workingDirectory": "bin\\Debug"
+    }
+  }
+}

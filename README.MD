@@ -23,43 +23,43 @@ You can download an alpha release from [here](https://github.com/adsau59/DriveSo
 ### Technology Stack
 DriveSP is made using
 - C#
+- .NET Core
 - Drive REST API
 - Docopt (Command Line API)
 - Newtonsoft Json
 
 ### How does it work?
-DriveSP solution contains 3 projects,
+DriveSP solution contains 3 VSProjects,
 - Publisher, it is used to create projects, create updates, create updater for clients.
 - Updater, it is used by clients to install updates, and even install selected version of the software.
 - CommonScripts, contains all the command classes used by both the projects.
 
 Definitions:
-- A project has 4 attributes
-	- Folder ID, which is the folder id in the drive.
+- Project is an encapsulation of for a software that has to be versioned using DriveSP, it has attributes as follows,
 	- Software name, the name of the folder created inside ```DefineXSoftwarePublisher``` folder.
-	- Version name, is the name of the version created.
-	- Version code, is the version number started from 1 and increments each time you increase the version.
-- SP.exe is the executable file for publisher.
-- SU.exe is the executable file for updater.
+	- Folder ID, which is the folder id in the drive.
+	- Versions, List of version that or on drive.
+- Version encapsulates the information of versions (update files) from drive, it has attributes as follows
+	- VersionCode, Integer defining the version number, of an update file. VersionCode starts with 1 and increments with each new updated.
+	- VersionName, String naming the update with a name, could be any string without "--" substring or space, and should be unique for each version.
 
-Working of Publisher, 
+Basic commands of Publisher, 
 
-- When ```SP init SOFTWARENAME VERSIONNAME``` is called,
+- When ```Publisher init SOFTWARENAME``` is called,
 	- A project is created on drive inside ```DefineXSoftwarePublisher``` folder inside ```root```.
 	- It also initializes files it needs under .publish folder.
-- When ```SP push``` is called, 
+- When ```Publisher push``` is called, 
 	- It searches for .pubignore file in the root directory of your project folder and then ignore all the files which returns true on regex check for the patterns on each line.
 	- Then it creates a zip with all the files and uploads it to drive with the file name ```versioncode--softwarename--versionname.zip``` inside the folder ```SOFTWARENAME``` in the ```DefineXSoftwarePublisher``` folder inside ```root```.
-- When ```SP upversion VERSIONNAME``` is use,
+- When ```Publisher upversion VERSIONNAME``` is use,
 	- It increases the version code of the project and changes its version name inside the version.json file.
 	- It should be called before pushing a new version.
-- When ```SP getupdater``` is called, it returns a link to ```updater.zip``` file which is to be given to the clients to download your software.
+- When ```Publisher getupdater``` is called, it returns a link to ```updater.zip``` file which is to be given to the clients to download your software.
 
-Working of Updater,
+Basic commands of Updater,
 
-- When ```SU install [VERSIONCODE]``` is called,
+- When ```Updater install [--code=<vc> | --name=<vn>]``` is called,
 	- Install the software with specified version, or the latest version if not specified
-- ```SU update [VERSIONCODE]``` does same thing as install for now, except it prompts if you have already installed new version
 
 ### How to use it?
 - Go to [Google Cloud Platform Console](https://console.cloud.google.com/), and create a project.
@@ -68,16 +68,16 @@ Working of Updater,
 - For release build make sure that the projects are build in this format
 ```
 \out
-|	SP.exe
+|	Publisher
 |	\out\updater
-|	|	update.bat
+|	|	install.bat
 |	|	\out\updater\.update
-|	|	|	SU.exe
+|	|	|	Updater
 ```
 Where, 
-- ```SP.exe``` represents all the binaries of Publisher project.
-- ```SU.exe``` represents al the binaries of Updater project.
-- ```update.bat``` contains
+- ```Publisher``` represents all the binaries of Publisher project.
+- ```Updater``` represents al the binaries of Updater project.
+- ```install.bat``` contains
 ```
 @echo off
 .updater\SU.exe install
@@ -85,10 +85,22 @@ Where,
 ### Roadmap
 Development plans of DriveSP can be viewed on the [Trello Board](https://trello.com/b/G1UKrXN6).
 
-Some of the plans include,
-- Delete updates.
-- Error report system.
-- Check for update and print Json response (which can be used in 3rd party application to check for updates and install them, inside the 3rd party application itself).
+Phase 1: (COMPLETED)
+- Create DriveSP Prototype with basic Publisher and Updater commands
+
+Phase 2: (COMPLETED)
+- Port to .NET Core
+- Add Features:
+  - pushnow commnd in Publisher, increase version and push with one command
+  - drop command in Publisher, delete a version from the drive
+  - showversions command, show versions on the drive
+  - target install version with either version code or version name
+  - checkupdate command, check if new version is available
+
+Phase 3:
+- Error reporting system, report errors using google drive.
+- Add Feature:
+	- Add ability for 3rd party application to check updated and perform update automatically.
 
 ### How to contribute?
 You can contribute this project by,
