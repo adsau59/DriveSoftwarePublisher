@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CommonScripts;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
@@ -90,13 +91,19 @@ namespace CommonScripts
 
 
                 var largestVersion = -1;
+
+                var updaterRegex = new Regex(@"^[a-zA-Z0-9_.]*--(win|linux|mac)*\.zip$");
+                var versionRegex = new Regex(@"^([a-zA-Z0-9_.]*)--([a-zA-Z0-9_.]*)--([a-zA-Z0-9_.]*)\.zip$");
+
                 foreach (var file in result.Files)
                 {
-                    if (file.Name == "updater.zip")
+                    if (updaterRegex.IsMatch(file.Name))
                         continue;
 
-                    var versionDetail = Utils.GetVersionDetailFromName(file.Name);
-                    versions.Add(new Version(int.Parse(versionDetail[0]), versionDetail[2], file.Id));
+                    var versionMatch = versionRegex.Match(file.Name);
+
+                    if(versionMatch.Success)
+                        versions.Add(new Version(int.Parse(versionMatch.Groups[1].Value), versionMatch.Groups[3].Value, file.Id));
                 }
 
 
@@ -177,13 +184,13 @@ namespace CommonScripts
         /// <param name="folderId">Drive Folder id of the parent</param>
         /// <param name="driveLink">drive file id of the updater.zip file</param>
         /// <returns>true if updater.zip is found</returns>
-        public static bool GetUpdaterLink(string folderId, out string driveLink)
+        public static bool GetUpdaterLink(Project project, string os, out string driveLink)
         {
             string pageToken = null;
             do
             {
                 var request = service.DriveService.Files.List();
-                request.Q = $"\'{folderId}\' in parents and trashed=false and name=\'updater.zip\'";
+                request.Q = $"\'{project.FolderId}\' in parents and trashed=false and name=\'{project.SoftwareName}--{os}.zip\'";
                 request.Spaces = "drive";
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;

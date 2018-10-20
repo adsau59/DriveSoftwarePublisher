@@ -11,6 +11,15 @@ dd/mm/yy
 		
 	Publisher.CreateZip:
 		uses WriteAllBytes instead of WriteAllText in order to copy binary files
+		
+	DriveUtils.GetVersions: 
+		uses regex instead of equating strings
+		
+	Pubisher/FilePath: 
+		addd win and linux directories for updater
+		
+	Publisher.GetUpdater: 
+		now takes os parameter
 
 26/07/2018:
 	Ported to .NET Core.

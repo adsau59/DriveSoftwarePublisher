@@ -17,7 +17,7 @@ Usage:
     Publisher setversion VERSIONCODE VERSIONNAME [-f | --force]
     Publisher push [-f | --force]
     Publisher pushnow [VERSIONNAME]
-    Publisher getupdater
+    Publisher getupdater (--win|--linux)
     Publisher drop (--code=<vc> | --name=<vn>)
     Publisher showversions
 
@@ -53,7 +53,9 @@ Options:
             else if (docopt.Get("getupdater").IsTrue)
             {
                 //get updater
-                publisher.GetUpdater();
+                publisher.GetUpdater(
+                    docopt.Get("--win").IsTrue?"win":"linux"
+                    );
             }
             else if (docopt.Get("upversion").IsTrue)
             {

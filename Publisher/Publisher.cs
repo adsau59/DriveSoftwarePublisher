@@ -152,10 +152,10 @@ namespace Publisher
         /// <summary>
         /// Upload updater to drive and return its link.
         /// </summary>
-        public void GetUpdater()
+        public void GetUpdater(string os)
         {
             string fileId;
-            if (DriveUtils.GetUpdaterLink(_project.FolderId, out fileId))
+            if (DriveUtils.GetUpdaterLink(_project, os, out fileId))
             {
                 Console.WriteLine(DriveUtils.IdToDirectDownloadLink(fileId));
                 return;
@@ -163,8 +163,24 @@ namespace Publisher
 
 
             //copy updater into temp
-            var sourcePath = FilePath.BaseUpdaterDir;
+            var sourcePath = "";
+
+            switch (os)
+            {
+                case "win":
+                    sourcePath = FilePath.WinUpdaterDir;
+                    break;
+
+                case "linux":
+                    sourcePath = FilePath.LinuxUpdaterDir;
+                    break;
+
+                default:
+                    return;
+            }
+
             var destinationPath = FilePath.TempDir;
+            Directory.CreateDirectory(destinationPath);
             Utils.Empty(new DirectoryInfo(FilePath.TempDir));
 
             //Now Create all of the directories
@@ -191,7 +207,7 @@ namespace Publisher
             //zip and upload
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.TempDir, FilePath.TempZipFile);
-            var updaterFileId = DriveUtils.UploadFileToCloud("updater.zip", _project.FolderId, FilePath.TempZipFile);
+            var updaterFileId = DriveUtils.UploadFileToCloud($"{_project.SoftwareName}--{os}.zip", _project.FolderId, FilePath.TempZipFile);
 
             Console.WriteLine(DriveUtils.IdToDirectDownloadLink(updaterFileId));
             
@@ -289,7 +305,6 @@ namespace Publisher
                 Console.WriteLine($"Adding: {filePath}");
                 var file = new FileInfo(FilePath.TempDir + filePath);
                 file.Directory?.Create();
-                //File.WriteAllText(file.FullName, File.ReadAllText(filePath));
                 File.WriteAllBytes(file.FullName, File.ReadAllBytes(filePath));
             }
 

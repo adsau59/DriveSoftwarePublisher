@@ -21,7 +21,9 @@ namespace Publisher
         public static string ExeRootDir = AppDomain.CurrentDomain.BaseDirectory;
         public static string SecretJsonFile = ExeRootDir + "client_secret.json";
         public static string BaseUpdaterDir = ExeRootDir + "updater/";
-        public static string CredentialsJsonFile = ExeRootDir + "/.credentials/drive-credentials.json";
+        public static string WinUpdaterDir = BaseUpdaterDir + "win/";
+        public static string LinuxUpdaterDir = BaseUpdaterDir + "linux/";
+        public static string CredentialsJsonFile = ExeRootDir + ".credentials/drive-credentials.json";
 
         public static string ConfigJsonFile = DotPublishDir + "config.json";
         public static string TempDir = DotPublishDir + "temp/";
