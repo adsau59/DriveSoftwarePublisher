@@ -1,5 +1,17 @@
 dd/mm/yy
 
+20/10/2018:
+	Changed dotnet core version from 2.0 to 2.1
+	
+	DriveUtils.FindFolderInRoot:
+		when folderid is not found, null is assigned for folderid instead of null
+		
+	Publisher.FilePath and Updater.FilePath:
+		Corrected file paths for linux
+		
+	Publisher.CreateZip:
+		uses WriteAllBytes instead of WriteAllText in order to copy binary files
+
 26/07/2018:
 	Ported to .NET Core.
 	

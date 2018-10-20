@@ -289,7 +289,8 @@ namespace Publisher
                 Console.WriteLine($"Adding: {filePath}");
                 var file = new FileInfo(FilePath.TempDir + filePath);
                 file.Directory?.Create();
-                File.WriteAllText(file.FullName, File.ReadAllText(filePath));
+                //File.WriteAllText(file.FullName, File.ReadAllText(filePath));
+                File.WriteAllBytes(file.FullName, File.ReadAllBytes(filePath));
             }
 
             File.Delete(FilePath.TempZipFile);

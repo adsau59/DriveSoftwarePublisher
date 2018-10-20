@@ -46,15 +46,12 @@ namespace CommonScripts
             using (var stream =
                 new FileStream(secretPath, FileMode.Open, FileAccess.Read))
             {
-                string credPath = "";
-                credPath = Path.Combine(credPath, credentialsJson);
-
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
                     Scopes,
                     "user",
                     CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
+                    new FileDataStore(credentialsJson, true)).Result;
             }
 
             // Create Drive API service.

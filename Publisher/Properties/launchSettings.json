@@ -2,7 +2,7 @@
   "profiles": {
     "Publisher": {
       "commandName": "Project",
-      "commandLineArgs": "showversions",
+      "commandLineArgs": "init hi",
       "workingDirectory": "bin\\Debug"
     }
   }

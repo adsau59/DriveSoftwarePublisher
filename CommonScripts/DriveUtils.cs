@@ -18,6 +18,7 @@ namespace CommonScripts
     {
 
         private static Service service;
+        private const string rootFolderName = "DefineXSoftwarePublisher";
 
         /// <summary>
         /// Must be executed before using any method from this classs.
@@ -38,8 +39,13 @@ namespace CommonScripts
         public static string GetRootFoderIdFromMyDrive()
         {
             if (_rootFolderId == null)
-                DriveUtils.FindFolderInRoot("root", "DefineXSoftwarePublisher", out _rootFolderId);
+            {
+                DriveUtils.FindFolderInRoot("root", rootFolderName, out _rootFolderId);
 
+                if(_rootFolderId == "")
+                    _rootFolderId = CreateFolder(rootFolderName, "root");
+                
+            }
             return _rootFolderId;
         }
 
@@ -223,7 +229,7 @@ namespace CommonScripts
                 pageToken = result.NextPageToken;
             } while (pageToken != null);
 
-            folderid = "";
+            folderid = null;
             return false;
         }
 
