@@ -43,6 +43,8 @@ namespace Updater
                 return;
             }
 
+            Console.WriteLine("Starting Download...");
+
             if (!DriveUtils.DownloadFile(FilePath.TempZipFile, version.FileId))
             {
                 Console.WriteLine("Downloding updated failed.");

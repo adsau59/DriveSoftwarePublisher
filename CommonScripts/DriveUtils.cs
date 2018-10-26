@@ -291,41 +291,39 @@ namespace CommonScripts
         public static bool DownloadFile(string filePath, string fileId)
         {
             var request = service.DriveService.Files.Get(fileId);
+            request.Fields = "size";
+            var size = request.Execute().Size;
             var stream = new MemoryStream();
 
             // Add a handler which will be notified on progress changes.
             // It will notify on each chunk download and when the
             // download is completed or failed.
 
-            var downloadFailed = false;
+            ProgressBar progressBar = null;
             request.MediaDownloader.ProgressChanged +=
                 progress =>
                 {
+
+
                     switch (progress.Status)
                     {
                         case DownloadStatus.Downloading:
-                        {
-                            //Console.WriteLine(progress.BytesDownloaded);
+                            if (progressBar == null)
+                                progressBar = new ProgressBar();
+                            
+                            progressBar.Report((double)progress.BytesDownloaded / size.Value);
                             break;
-                        }
+
                         case DownloadStatus.Completed:
-                        {
-                            //Console.WriteLine("Download complete.");
+                            progressBar.Dispose();
                             break;
-                        }
-                        case DownloadStatus.Failed:
-                        {
-                            //Console.WriteLine("Download failed.");
-                            downloadFailed = true;
-                            break;
-                        }
+                        
                     }
+                    
                 };
 
-            if (downloadFailed)
-                return false;
-
-            request.Download(stream);
+            var task = request.DownloadAsync(stream);
+            task.Wait();
 
             System.IO.File.Delete(filePath);
             using (var file = new FileStream(filePath, FileMode.Create, FileAccess.Write))
