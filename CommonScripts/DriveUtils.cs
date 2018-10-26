@@ -7,6 +7,7 @@ using CommonScripts;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
+using Google.Apis.Upload;
 using File = Google.Apis.Drive.v3.Data.File;
 using Version = CommonScripts.Version;
 
@@ -133,6 +134,12 @@ namespace CommonScripts
         /// <returns>id of the file that is saved</returns>
         public static string UploadFileToCloud(string fileName, string parentFolderId, string localFilePath)
         {
+            var uploadStream = new System.IO.FileStream(localFilePath,
+                                                System.IO.FileMode.Open,
+                                                System.IO.FileAccess.Read);
+
+            sizeOfFile = new System.IO.FileInfo(localFilePath).Length;
+
             var fileMetadata = new File
             {
                 Name = fileName,
@@ -141,18 +148,48 @@ namespace CommonScripts
                     parentFolderId
                 }
             };
-            FilesResource.CreateMediaUpload request;
-            using (var stream = new FileStream(localFilePath,
-                FileMode.Open))
-            {
-                request = service.DriveService.Files.Create(
-                    fileMetadata, stream, "application/zip");
-                request.Fields = "id";
-                request.Upload();
-            }
 
-            var file = request.ResponseBody;
+            // Get the media upload request object.
+            var insertRequest = service.DriveService.Files.Create(
+                fileMetadata,
+                uploadStream,
+                "application/zip");
+
+            // Add handlers which will be notified on progress changes and upload completion.
+            // Notification of progress changed will be invoked when the upload was started,
+            // on each upload chunk, and on success or failure.
+            insertRequest.ProgressChanged += Upload_ProgressChanged;
+            insertRequest.ResponseReceived += Upload_ResponseReceived;
+
+            var task = insertRequest.UploadAsync();
+            task.ContinueWith(t =>
+            {
+                // Remeber to clean the stream.
+                uploadStream.Dispose();
+            });
+
+            task.Wait();
+
+            var file = insertRequest.ResponseBody;
             return file.Id;
+
+        }
+
+        static ProgressBar progressBar = null;
+        static long sizeOfFile;
+
+        static void Upload_ProgressChanged(IUploadProgress progress)
+        {
+            if(progress.Status == UploadStatus.Starting)
+            {
+                progressBar = new ProgressBar();
+            }
+            progressBar.Report((double) progress.BytesSent / sizeOfFile);
+        }
+
+        static void Upload_ResponseReceived(File file)
+        {
+            progressBar.Dispose();
         }
 
         /// <summary>
@@ -205,7 +242,7 @@ namespace CommonScripts
             } while (pageToken != null);
 
             //if cant find then
-            driveLink = "";
+            driveLink = null;
             return false;
         }
 
