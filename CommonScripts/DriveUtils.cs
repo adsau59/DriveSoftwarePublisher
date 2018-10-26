@@ -40,13 +40,23 @@ namespace CommonScripts
         /// <returns>FolderId of "DefineXSoftwarePublisher" on drive</returns>
         public static string GetRootFoderIdFromMyDrive()
         {
+            //if id is not known
             if (_rootFolderId == null)
-            {
+                //try to find it
                 DriveUtils.FindFolderInRoot("root", rootFolderName, out _rootFolderId);
 
-                if(_rootFolderId == "")
-                    _rootFolderId = CreateFolder(rootFolderName, "root");
-                
+            //if its still not known create it
+            if (_rootFolderId == null)
+            {
+                _rootFolderId = CreateFolder(rootFolderName, "root");
+
+                Permission permission = new Permission()
+                {
+                    Type = "anyone",
+                    Role = "reader"
+                };
+
+                service.DriveService.Permissions.Create(permission, _rootFolderId).Execute();
             }
             return _rootFolderId;
         }

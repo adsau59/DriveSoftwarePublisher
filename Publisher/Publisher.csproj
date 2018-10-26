@@ -47,6 +47,7 @@
 
   <PropertyGroup>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
 </Project>
