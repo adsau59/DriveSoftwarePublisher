@@ -8,7 +8,7 @@ This project might help programmers and software developers who have very low bu
 
 ### Demo video
 <div align="center">
-  <a href="https://www.youtube.com/watch?v=TdtkTxmOgw8"><img src="https://img.youtube.com/vi/TdtkTxmOgw8/0.jpg" alt="IMAGE ALT TEXT"></a>
+  <a href="https://www.youtube.com/watch?v=TdtkTxmOgw8"><img src="http://i3.ytimg.com/vi/TdtkTxmOgw8/maxresdefault.jpg" alt="IMAGE ALT TEXT"></a>
 </div>
 
 ### Feature
@@ -17,8 +17,23 @@ By using DriveSP you can,
 - Create updates that clients can install by just one double click.
 - Ignore the files and folders you don't want to include in the update using .pubignore file.
 
-### I just want to use the software.
+### Release
 You can download an alpha release from [here](https://github.com/adsau59/DriveSoftwarePublisher/releases), put the SP.exe inside environment variables file path for ease of use.
+
+##### Installation Instruction
+
+Windows:
+- Extract
+- Add the extracted binaries into environment path
+
+Linux:
+- Extract
+- run, `gedit ~/.profile`
+- add this in the end of the file
+```
+export PATH=$PATH:<path_to_publisher>
+```
+- save and reboot
 
 ### Technology Stack
 DriveSP is made using
@@ -54,7 +69,7 @@ Basic commands of Publisher,
 - When ```Publisher upversion VERSIONNAME``` is use,
 	- It increases the version code of the project and changes its version name inside the version.json file.
 	- It should be called before pushing a new version.
-- When ```Publisher getupdater``` is called, it returns a link to ```updater.zip``` file which is to be given to the clients to download your software.
+- When ```Publisher getupdater (--win|--linux)``` is called, it returns a link to updater zip file which is to be given to the clients to download your software.
 
 Basic commands of Updater,
 
@@ -71,7 +86,9 @@ Basic commands of Updater,
 |	Publisher
 |	\out\updater
 |	|	install.bat
-|	|	\out\updater\.update
+|	|	\out\updater\win\.update
+|	|	|	Updater.exe
+|	|	\out\updater\linux\.update
 |	|	|	Updater
 ```
 Where, 
@@ -80,7 +97,7 @@ Where,
 - ```install.bat``` contains
 ```
 @echo off
-.updater\SU.exe install
+.updater\Updater.exe install
 ```
 ### Roadmap
 Development plans of DriveSP can be viewed on the [Trello Board](https://trello.com/b/G1UKrXN6).
@@ -97,7 +114,12 @@ Phase 2: (COMPLETED)
   - target install version with either version code or version name
   - checkupdate command, check if new version is available
 
-Phase 3:
+Phase 3: (COMPLETED)
+- Add Features:
+	- Multi OS Support (Linux and Windows)
+	- Support for large files
+  
+Phase 4:
 - Error reporting system, report errors using google drive.
 - Add Feature:
 	- Add ability for 3rd party application to check updated and perform update automatically.
