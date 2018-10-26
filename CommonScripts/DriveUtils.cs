@@ -79,7 +79,6 @@ namespace CommonScripts
 
             var versionList = new List<int>();
             string pageToken = null;
-            File latestFile = null;
             FileList result;
             do
             {
@@ -89,9 +88,6 @@ namespace CommonScripts
                 request.Fields = "nextPageToken, files(id, name)";
                 request.PageToken = pageToken;
                 result = request.Execute();
-
-
-                var largestVersion = -1;
 
                 var updaterRegex = new Regex(@"^[a-zA-Z0-9_.]*--(win|linux|mac)*\.zip$");
                 var versionRegex = new Regex(@"^([a-zA-Z0-9_.]*)--([a-zA-Z0-9_.]*)--([a-zA-Z0-9_.]*)\.zip$");
@@ -347,7 +343,7 @@ namespace CommonScripts
                 service.DriveService.Files.Delete(fileId).Execute();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

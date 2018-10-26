@@ -3,13 +3,11 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <ApplicationIcon />
-    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="docopt.net" Version="0.6.1.9" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.35.1.1312" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.36.1.1390" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
@@ -25,6 +23,12 @@
     </None>
   </ItemGroup>
 
-
+  <ItemGroup>
+    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.5" />
+  </ItemGroup>
+  
+<PropertyGroup>
+  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+</PropertyGroup>
 
 </Project>

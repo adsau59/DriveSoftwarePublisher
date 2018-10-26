@@ -154,6 +154,8 @@ namespace Publisher
         /// </summary>
         public void GetUpdater(string os)
         {
+            Console.WriteLine("Creating Updater...");
+
             string fileId;
             if (DriveUtils.GetUpdaterLink(_project, os, out fileId))
             {
@@ -181,7 +183,7 @@ namespace Publisher
 
             var destinationPath = FilePath.TempDir;
             Directory.CreateDirectory(destinationPath);
-            Utils.Empty(new DirectoryInfo(FilePath.TempDir));
+            Utils.Empty(new DirectoryInfo(destinationPath));
 
             //Now Create all of the directories
             foreach (var dirPath in Directory.GetDirectories(sourcePath, "*",
@@ -207,8 +209,10 @@ namespace Publisher
             //zip and upload
             File.Delete(FilePath.TempZipFile);
             ZipFile.CreateFromDirectory(FilePath.TempDir, FilePath.TempZipFile);
+            Console.WriteLine("Uploading to Drive...");
             var updaterFileId = DriveUtils.UploadFileToCloud($"{_project.SoftwareName}--{os}.zip", _project.FolderId, FilePath.TempZipFile);
 
+            Console.WriteLine("Link for the updater:");
             Console.WriteLine(DriveUtils.IdToDirectDownloadLink(updaterFileId));
             
         }
